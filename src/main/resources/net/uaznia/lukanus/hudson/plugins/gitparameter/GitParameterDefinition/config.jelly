@@ -8,6 +8,14 @@
   <f:entry name="type" title="Parameter Type" field="type">
     <select name="type">
         <j:choose>
+            <j:when test="${instance.type eq 'PT_BRANCH'}">
+               <option value="PT_BRANCH" selected="selected">Branch</option>
+            </j:when>
+            <j:otherwise>
+               <option value="PT_BRANCH">Branch</option>
+            </j:otherwise>
+        </j:choose>
+        <j:choose>
             <j:when test="${instance.type eq 'PT_TAG'}">
                 <option value="PT_TAG" selected="selected">Tag</option>
             </j:when>

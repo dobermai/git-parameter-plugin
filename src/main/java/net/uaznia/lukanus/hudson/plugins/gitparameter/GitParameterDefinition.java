@@ -27,6 +27,7 @@ public class GitParameterDefinition extends ParameterDefinition implements Compa
 
     public static final String PARAMETER_TYPE_TAG = "PT_TAG";
     public static final String PARAMETER_TYPE_REVISION = "PT_REVISION";
+    public static final String PARAMETER_TYPE_BRANCH = "PT_BRANCH";
 
     private final UUID uuid;
 
@@ -47,6 +48,7 @@ public class GitParameterDefinition extends ParameterDefinition implements Compa
 
     private Map<String, String> revisionMap;
     private Map<String, String> tagMap;
+    private Map<String, String> branchMap;
 
     @DataBoundConstructor
     public GitParameterDefinition(String name,
@@ -112,7 +114,7 @@ public class GitParameterDefinition extends ParameterDefinition implements Compa
 
 
     public void setType(String type) {
-        if (type.equals(PARAMETER_TYPE_TAG) || type.equals(PARAMETER_TYPE_REVISION)) {
+        if (type.equals(PARAMETER_TYPE_TAG) || type.equals(PARAMETER_TYPE_REVISION) || type.equals(PARAMETER_TYPE_BRANCH)) {
             this.type = type;
         } else {
             this.errorMessage = "wrongType";
@@ -254,16 +256,21 @@ public class GitParameterDefinition extends ParameterDefinition implements Compa
                 } else if (type.equalsIgnoreCase(PARAMETER_TYPE_TAG)) {
                     tagMap = new TreeMap<String, String>();
 
-                    //Set<String> tagNameList = newgit.getTagNames("*");
                     for (String tagName : newgit.getTagNames("*")) {
                         tagMap.put(tagName, tagName);
                     }
-                }
+                } else if (type.equalsIgnoreCase(PARAMETER_TYPE_BRANCH)) {
 
+                    branchMap = new HashMap<String, String>();
+
+                    for (hudson.plugins.git.Branch branch : newgit.getBranches()) {
+
+                        branchMap.put(branch.getName(), branch.getName());
+
+                    }
+                }
             }
         }
-        //     }
-
     }
 
     public String getErrorMessage() {
@@ -282,6 +289,16 @@ public class GitParameterDefinition extends ParameterDefinition implements Compa
             generateContents(PARAMETER_TYPE_TAG);
         }
         return tagMap;
+    }
+
+    public Map<String, String> getBranchMap() {
+        if (branchMap == null || branchMap.isEmpty()) {
+
+            generateContents(PARAMETER_TYPE_BRANCH);
+
+        }
+        return branchMap;
+
     }
 
 
